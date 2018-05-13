@@ -1,0 +1,6 @@
+{
+  "nodeLimit": 100,
+  "clusterKeyLimit": 3,
+  "seachLinkPort": 2525,
+  "fileDownloadPort": 3636
+}
