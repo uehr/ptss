@@ -1,12 +1,17 @@
 const node = require('./models/node');
+const text = require('./models/text');
 const loader = require('./models/sequelizeLoader');
 const system = require("../system.json")
 const socketIo = require("socket.io")
 const wsConnect = require("socket.io-client").connect
+const uploader = require("./lib/uploader")
+const jsonDb = require("node-json-db")
+const nodeData = new jsonDb(`./data/${system.nodeDataPath}`, true, true)
+const textData = new jsonDb(`./data/${system.textDataPath}`, true, true)
 const seachLink = socketIo.listen(system.seachLinkPort)
-const fileDownload = socketIo.listen(system.fileDownloadPort)
-let connections = {}
-node.sync()
+let seachLinkConnections = {}
+let downloadConnections = {}
+uploader.listen()
 
 seachLink.sockets.on("connection", socket => {
   console.log("connecting to ")
@@ -28,27 +33,57 @@ module.exports = {
       const addr = `http://${IP}:${system.seachLinkPort}`
       const socket = wsConnect(addr)
       socket.on("connect", () => {
-        connections[IP] = socket
+        seachLinkConnections[IP] = socket
       })
       socket.on("event", data => {
         console.log("event:")
         console.log(data)
       })
       socket.on("disconnect", () => {
-        delete connections[IP]
+        delete seachLinkConnections[IP]
       })
       resolve(socket)
     })
   },
-  textUpload: (IP, textId, blockNum) => {
+  //not support multiple upload
+  textDownload: (IP, textId) => {
     return new Promise((resolve, reject) => {
-      //TODO
+      try {
+        //if is exists, not error
+        textData.getData(`/${textId}`)
+        // throw "is exists"
+      } catch(err) {
+        //is is not exists
+        if(err.name != "DataError") {
+          reject(err)
+        }
+      }
+      const addr = `http://${IP}:${system.uploadPort}`
+      const socket = wsConnect(addr)
+      socket.on("connect", () => {
+        downloadConnections[IP] = socket
+        socket.emit("require", textId)
+      })
+      socket.on("upload", res => {
+        textData.push(`/${res.id}`, res.text)
+        resolve(res)
+      })
+      socket.on("failer", err => {
+        console.log("failer:")
+        console.log(err)
+      })
+      socket.on("disconnect", () => {
+        delete downloadConnections[IP]
+      })
     })
   },
-  //support multiple upload
-  textDownload: (IPs, textId) => {
-    return new Promise((resolve, reject) => {
-      //TODO
+  hoge: () => {
+    // text.destroy(
+    //   {where: {textId: "test"}}
+    // )
+    text.create({
+      textId: "test",
+      text: "test text"
     })
   }
 }
