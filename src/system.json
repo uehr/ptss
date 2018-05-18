@@ -1,0 +1,12 @@
+{
+  "nodeLimit": 100,
+  "clusterKeyLimit": 3,
+  "seachLinkPort": 2000,
+  "uploadPort": 2001,
+  "peerPort": 2002,
+  "nodeDataPath": "node.json",
+  "textDataPath": "text.json",
+  "keyDataPath": "key.json",
+  "localDataPath": "local.json",
+  "shareKeyInterval": 5
+}

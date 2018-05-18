@@ -1,0 +1,19 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo testing"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lowdb": "^1.0.0",
+    "node-json-db": "^0.7.5",
+    "sleep-promise": "^6.0.0",
+    "socket.io": "^2.1.0",
+    "socket.io-client": "^2.1.0",
+    "uuid": "^3.2.1"
+  }
+}

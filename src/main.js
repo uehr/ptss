@@ -1,9 +1,9 @@
-const node = require("./node.js")
-// node.connectSeachLink("127.0.0.1").then(socket => {})
+const node = new require("./node.js")
+node.connectPeer("172.17.0.2")
 // node.hoge()
-node.textDownload("127.0.0.1", "test").then(res => {
-  console.log("res:")
-  console.log(res)
-}).catch(err => {
-  console.log(err)
-})
+// node.textDownload(process.argv[2], "test").then(res => {
+//   console.log("res:")
+//   console.log(res)
+// }).catch(err => {
+//   console.log(err)
+// })

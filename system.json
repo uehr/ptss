@@ -1,9 +1,0 @@
-{
-  "nodeLimit": 100,
-  "clusterKeyLimit": 3,
-  "seachLinkPort": 2525,
-  "uploadPort": 3636,
-  "blockUnit": 5,
-  "nodeDataPath": "node.json",
-  "textDataPath": "text.json"
-}
