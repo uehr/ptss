@@ -1,1 +1,0 @@
-const node = new (require("./node.js"))()

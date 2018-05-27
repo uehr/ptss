@@ -1,1 +1,0 @@
-sudo docker ps -a -q | sudo xargs docker rm -f
