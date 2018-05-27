@@ -27,6 +27,21 @@ const peerSocket = require("./lib/peerSocket")
 const colors = require("colors")
 const sep = new Array(system.logSepLength).join("-")
 let CUIProcess = child_process.fork("./lib/CUI.js")
+const authorDescription = "uehr(https://www.uehr.co)"
+const systemDescription = "PTSS is simple text sharing system on pure p2p network"
+const cmdHelps = {
+  "help": "Show ptss help",
+  "hello": "Greeting to ptss",
+  "addnode (IP)": "Add other node",
+  "clusterkey (key1) (key2) (key3)": "Register cluster key",
+  "download (text id)": "Download text",
+  "texts": "Local saved text list",
+  "read (text id)": "Read locally saved text",
+  "ip": "Show local IP",
+  "peer": "Show connecting peers",
+  "upload (text name) (text content)": "Text upload to ptss network",
+  "seach (seach word)": "Seach text uploaded to the network"
+}
 
 console.ptssText = (textDetails) => {
   console.log(`[writer: ${textDetails.writerIP.green}]\n[title: ${textDetails.name.green}]\n${sep}\n${textDetails.content.bold}\n${sep}`)
@@ -96,6 +111,11 @@ class node {
           case "hello": {
             console.log("Hello from ptss :)".bold)
             return
+          } case "help": {
+            console.log(`Author: ${authorDescription.yellow}\nOverview:\n  ${systemDescription.green}\nCommands:`)
+            for (let cmdName in cmdHelps)
+              console.log(`  ${cmdName.green}: ${cmdHelps[cmdName]}`)
+            return
           } case "addnode": {
             const addIP = cmd.args[0]
             try {
@@ -125,7 +145,7 @@ class node {
               console.log(err.red)
             })
             return
-          } case "get": {
+          } case "read": {
             try {
               const id = cmd.args[0]
               if (this.texts.has(id).value()) {
@@ -162,7 +182,7 @@ class node {
                 const details = textsDetails[id]
                 console.log(`name: ${details.name.green}\nwriter: ${details.writerIP === localIP() ? "you".green : details.writerIP.green}\nid: ${id.green}`)
               }
-              console.log(`${sep}\nmatch: ${textsLength}`)
+              console.log(`${sep}\nmatch: ${textsLength.toString().green}`)
             } catch (err) {
               console.log(err.red)
             }
@@ -194,6 +214,10 @@ class node {
             } catch (err) {
               console.log(err.red)
             }
+            return
+          } case "exit": {
+            console.log("exit".green)
+            process.exit(0)
             return
           } default: {
             console.log("unknown command".red)
