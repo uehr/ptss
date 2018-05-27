@@ -28,19 +28,20 @@ const colors = require("colors")
 const sep = new Array(system.logSepLength).join("-")
 let CUIProcess = child_process.fork("./lib/CUI.js")
 const authorDescription = "uehr(https://www.uehr.co)"
-const systemDescription = "PTSS is simple text sharing system on pure p2p network"
+const systemDescription = "PTSS is pure p2p simple text sharing system"
 const cmdHelps = {
   "help": "Show ptss help",
   "hello": "Greeting to ptss",
   "addnode (IP)": "Add other node",
   "clusterkey (key1) (key2) (key3)": "Register cluster key",
   "download (text id)": "Download text",
-  "texts": "Local saved text list",
+  "texts": "Locally saved text list",
   "read (text id)": "Read locally saved text",
   "ip": "Show local IP",
   "peer": "Show connecting peers",
   "upload (text name) (text content)": "Text upload to ptss network",
-  "seach (seach word)": "Seach text uploaded to the network"
+  "seach (seach word)": "Seach text uploaded to the network",
+  "exit": "Exit"
 }
 
 console.ptssText = (textDetails) => {
@@ -203,7 +204,7 @@ class node {
             try {
               const seachWord = cmd.args[0]
               console.log("seaching...".green)
-              const matchKeys = await this.seach(seachWord, system.seachPopLimit)
+              const matchKeys = await this.seach(seachWord, system.seachHopLimit)
               const matchLength = Object.keys(matchKeys).length
               for (let id in matchKeys) {
                 const key = matchKeys[id]
@@ -468,7 +469,7 @@ class node {
     return matchKeys
   }
 
-  seach(seachWord, popCount) {
+  seach(seachWord, hopCount) {
     return this.getSeachLinkableNodeIPs({ [localIP()]: {} }).then(seachLinkableNodeIPs => {
       return new Promise((resolve, reject) => {
         if (seachLinkableNodeIPs.length <= 0) reject("not found seach linkable node")
@@ -486,7 +487,7 @@ class node {
           }
 
           this.getMatchKeys(seachWord).then(matchKeys => {
-            socket.emit("seach-request", seachWord, localIP(), matchKeys, localState, popCount)
+            socket.emit("seach-request", seachWord, localIP(), matchKeys, localState, hopCount)
           })
 
           setTimeout(() => {
