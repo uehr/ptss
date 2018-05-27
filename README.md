@@ -4,7 +4,7 @@
 ## Overview
 ### PTSSはピュアP2Pネットワークで構成されるシンプルなテキスト共有システムです。
 ### ※あくまで学習目的で開発した為、実用向きの設計ではありません。使用する際は自己責任でお願いします。
-![PTSS](https://i.imgur.com/WbkPm9N.png)
+<img src="https://user-images.githubusercontent.com/26696733/40591168-32185798-6247-11e8-8f0c-44b69b8430e8.png" width=50%>
 
 ## Commands 
   ### help
