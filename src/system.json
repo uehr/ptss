@@ -1,12 +1,21 @@
 {
   "nodeLimit": 100,
   "clusterKeyLimit": 3,
-  "seachLinkPort": 2000,
-  "uploadPort": 2001,
-  "peerPort": 2002,
+  "p2pPort": 2525,
   "nodeDataPath": "node.json",
   "textDataPath": "text.json",
   "keyDataPath": "key.json",
   "localDataPath": "local.json",
-  "shareKeyInterval": 5
+  "exitCmd": "exit",
+  "shareDataInterval": 5000,
+  "dateFormat": "YYYY-MM-DD HH:mm:ss",
+  "keyLimit": 3600000,
+  "checkKeyLimitInterval": 3600000,
+  "checkNodeLimitInterval": 10000,
+  "updateKeyInterval": 3600000,
+  "seachPopLimit": 5,
+  "peerConnectTimeout": 5000,
+  "peerConnectCheckInterval": 5000,
+  "logSepLength": 21,
+  "nodesLimit": 10
 }

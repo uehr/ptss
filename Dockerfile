@@ -13,7 +13,12 @@ RUN npm i n -g
 RUN n latest
 RUN apt-get -qy autoremove
 ADD src /ptss
-RUN cd /ptss && npm i
-EXPOSE 1414
+WORKDIR ptss
+RUN rm -rf data/key.json
+RUN rm -rf data/local.json
+RUN rm -rf data/text.json
+RUN touch data/key.json
+RUN touch data/local.json
+RUN npm i
 EXPOSE 2525
-EXPOSE 3636
+# CMD node main.js
