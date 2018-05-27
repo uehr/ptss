@@ -89,8 +89,8 @@ ptss>
 ### 1. Check startup
 #### Let's greeting !
 ```
-$ cd ptss
-$ node src/startCUI.js
+$ cd ptss/src
+$ node startCUI.js
 ptss> hello
 Hello from ptss :)
 ```
