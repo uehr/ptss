@@ -45,7 +45,7 @@ const cmdHelps = {
 }
 
 console.ptssText = (textDetails) => {
-  console.log(`[writer: ${textDetails.writerIP.green}]\n[title: ${textDetails.name.green}]\n${sep}\n${textDetails.content.bold}\n${sep}`)
+  console.log(`[writer: ${(textDetails.writerIP === localIP() ? "You" : textDetails.writerIP).green}]\n[title: ${textDetails.name.green}]\n${sep}\n${textDetails.content.bold}\n${sep}`)
 }
 
 class node {
@@ -181,7 +181,7 @@ class node {
               for (let id in textsDetails) {
                 console.log(sep)
                 const details = textsDetails[id]
-                console.log(`name: ${details.name.green}\nwriter: ${details.writerIP === localIP() ? "you".green : details.writerIP.green}\nid: ${id.green}`)
+                console.log(`name: ${details.name.green}\nwriter: ${(details.writerIP === localIP() ? "You" : details.writerIP).green}\nid: ${id.green}`)
               }
               console.log(`${sep}\nmatch: ${textsLength.toString().green}`)
             } catch (err) {
@@ -206,12 +206,17 @@ class node {
               console.log("seaching...".green)
               const matchKeys = await this.seach(seachWord, system.seachHopLimit)
               const matchLength = Object.keys(matchKeys).length
+              let showedTextIds = []
               for (let id in matchKeys) {
                 const key = matchKeys[id]
-                const isDownloaded = this.texts.has(key.textId).value()
-                console.log(`${sep}\nname: ${key.textName.green}\nwriter: ${key.writerIP === localIP() ? "you".green : key.writerIP.green}\nid: ${key.textId.green}\ndownloaded: ${(isDownloaded ? "yes" : "no").green}`)
+                const textId = matchKeys[id].textId
+                if (showedTextIds.indexOf(textId) < 0) {
+                  showedTextIds.push(textId)
+                  const isDownloaded = this.texts.has(key.textId).value()
+                  console.log(`${sep}\nname: ${key.textName.green}\nwriter: ${(key.writerIP === localIP() ? "You" : key.writerIP).green}\nid: ${key.textId.green}\ndownloaded: ${(isDownloaded ? "yes" : "no").green}`)
+                }
               }
-              console.log(`${sep}\nmatch: ${matchLength.toString().green}`)
+              console.log(`${sep}\nmatch: ${showedTextIds.length.toString().green}`)
             } catch (err) {
               console.log(err.red)
             }
@@ -457,14 +462,12 @@ class node {
     })
   }
 
-  async getMatchKeys(seachWord) {
-    const localKeys = this.removeExpiredKeys() // check expired keys
+  getMatchKeys(seachWord) {
     let matchKeys = {}
-    for (let id in localKeys.getState()) {
-      const key = localKeys.get(id).value()
-      if (key.textName.match(seachWord)) {
+    for (let id in this.keys.getState()) {
+      const key = this.keys.get(id).value()
+      if (key.textName.match(seachWord))
         matchKeys[id] = key
-      }
     }
     return matchKeys
   }
@@ -479,16 +482,9 @@ class node {
           let localDetails = this.local.getState()
           delete localDetails["IP"]
           let localState = { [localIP()]: localDetails }
-          let socket
-          if (seachLinkIP in this.peers) {
-            socket = this.peers[seachLinkIP]
-          } else {
-            socket = wsConnect(`ws://${seachLinkIP}:${system.p2pPort}`)
-          }
-
-          this.getMatchKeys(seachWord).then(matchKeys => {
-            socket.emit("seach-request", seachWord, localIP(), matchKeys, localState, hopCount)
-          })
+          const socket = wsConnect(`ws://${seachLinkIP}:${system.p2pPort}`)
+          const localMatchKeys = this.getMatchKeys(seachWord)
+          socket.emit("seach-request", seachWord, localIP(), localMatchKeys, localState, hopCount)
 
           setTimeout(() => {
             reject("seach timeout")
